@@ -1,19 +1,18 @@
 package Controller;
 
-import Application.Main;
 import Database.Datenbank;
+import Database.ZeiterfassungDAO;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 
-import java.math.BigInteger;
 import java.time.LocalDate;
-import java.time.Month;
-import java.time.Period;
 import java.time.YearMonth;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 public class ZeiterfassungController {
@@ -36,11 +35,14 @@ public class ZeiterfassungController {
 	private Label aktuellerMonat;
 
 	@FXML
-	private TextField zeiterfassung;
+	private TextField zeiterfassungField;
+
+	@FXML
+	private Button erfassenButton;
 
 	private String aktuellerTag;
 
-	private String aktuellesJahr;
+	private int aktuellesJahr;
 
 	@FXML
 	private void initialize () {
@@ -54,13 +56,13 @@ public class ZeiterfassungController {
 		YearMonth yearMonthObject = YearMonth.now();
 		int daysInMonth = yearMonthObject.lengthOfMonth();
 
-		aktuellerMonat.setText(yearMonthObject.getMonth().toString());
+		aktuellerMonat.setText(Integer.toString(yearMonthObject.getMonth().getValue()));
 
 		LocalDate localDate = LocalDate.now();
 
 		aktuellerTag =  Integer.toString(localDate.getDayOfMonth());
 
-		aktuellesJahr = Integer.toString(localDate.getYear());
+		aktuellesJahr = localDate.getYear();
 
 		ToggleGroup toggleGroup = new ToggleGroup();
 
@@ -76,6 +78,12 @@ public class ZeiterfassungController {
 					//button.setStyle("-fx-base: red;");
                     aktuellerTag = button.getText();
                     System.out.println(aktuellerTag);
+
+                    GregorianCalendar calendar = new GregorianCalendar(aktuellesJahr,Integer.parseInt(aktuellerMonat.getText()),Integer.parseInt(aktuellerTag));
+                    Date date = calendar.getTime();
+
+                    zeiterfassungField.setText(Integer.toString(ZeiterfassungDAO.getZeiterfassung(date, 1)));
+
                 }
             });
 
@@ -85,6 +93,16 @@ public class ZeiterfassungController {
 
 
 
+		erfassenButton.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				GregorianCalendar calendar = new GregorianCalendar(aktuellesJahr,Integer.parseInt(aktuellerMonat.getText()),Integer.parseInt(aktuellerTag));
+				Date date = calendar.getTime();
+				//ZeiterfassungDAO.insertZeiterfassung(date, 1, Integer.parseInt(zeiterfassungField.getText()));
 
+					ZeiterfassungDAO.updateZeiterfassung(date, 1, Integer.parseInt(zeiterfassungField.getText()));
+
+			}
+		});
 	}
 }
