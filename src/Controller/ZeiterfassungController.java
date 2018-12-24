@@ -5,6 +5,7 @@ import Database.ZeiterfassungDAO;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
@@ -32,9 +33,9 @@ public class ZeiterfassungController {
 	@FXML
     private Button naechsterMonat;
 
-	/*@FXML
+	@FXML
     private Label aktuellesDatum;
-*/
+
 	@FXML
 	private TextField zeiterfassungField;
 
@@ -42,46 +43,27 @@ public class ZeiterfassungController {
 	private Button erfassenButton;
 
 	private int aktuellerTag;
-
-	@FXML
-    private Label aktuellerMonat;
-
+    private int aktuellerMonat;
 	private int aktuellesJahr;
 
 	@FXML
 	private void initialize () {
 
-
-
-		List<Integer> dates = new ArrayList<Integer>();
-
-		//TODO thisMonth.minusMonths(1);
-		//TODO thisMonth.plusMonths(1);
-
 		// Get the number of days in that month
-		YearMonth yearMonthObject = YearMonth.now();
+        YearMonth yearMonthObject = YearMonth.now();
 		int daysInMonth = yearMonthObject.lengthOfMonth();
-
-		aktuellerMonat.setText(Integer.toString(yearMonthObject.getMonth().getValue()));
-
-        //aktuellesDatum.setText(aktuellerMonat.getText());
-
+		aktuellerMonat = yearMonthObject.getMonth().getValue();
 		LocalDate localDate = LocalDate.now();
-
 		aktuellerTag =  localDate.getDayOfMonth();
-
 		aktuellesJahr = localDate.getYear();
 
 		setToggleButtons(daysInMonth);
-
         setMonateHandler();
 
 		erfassenButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				GregorianCalendar calendar = new GregorianCalendar(aktuellesJahr,Integer.parseInt(aktuellerMonat.getText()),aktuellerTag);
-				Date date = calendar.getTime();
-				ZeiterfassungDAO.updateZeiterfassung(date, 1, Integer.parseInt(zeiterfassungField.getText()));
+                updateZeitFeld();
 			}
 		});
 	}
@@ -90,31 +72,47 @@ public class ZeiterfassungController {
         letzterMonat.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                if(aktuellerMonat.getText().equals("1")) {
-                    aktuellerMonat.setText("12");
+                if(aktuellerMonat == 1) {
+                    aktuellerMonat = 12;
                     aktuellesJahr = aktuellesJahr-1;
                 }
                 else {
-                    aktuellerMonat.setText(Integer.toString(Integer.parseInt(aktuellerMonat.getText())-1));
+                    aktuellerMonat = aktuellerMonat-1;
                 }
+                aktuellesDatum.setText(Integer.toString(aktuellerTag) + ". " + Integer.toString(aktuellerMonat) + " " + Integer.toString(aktuellesJahr));
+                updateZeitFeld();
+
+                YearMonth yearMonthObject = YearMonth.of(aktuellesJahr, aktuellerMonat);
+                aktuellerTag = 1;
+                setToggleButtons(yearMonthObject.lengthOfMonth());
             }
         });
 
         naechsterMonat.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                if(aktuellerMonat.getText().equals("12")) {
-                    aktuellerMonat.setText("1");
+                if(aktuellerMonat == 12) {
+                    aktuellerMonat = 1;
                     aktuellesJahr = aktuellesJahr+1;
                 }
                 else {
-                    aktuellerMonat.setText(Integer.toString(Integer.parseInt(aktuellerMonat.getText())+1));
+                    aktuellerMonat = aktuellerMonat+1;
                 }
+                aktuellesDatum.setText(Integer.toString(aktuellerTag) + ". " + Integer.toString(aktuellerMonat) + " " + Integer.toString(aktuellesJahr));
+                updateZeitFeld();
+
+                YearMonth yearMonthObject = YearMonth.of(aktuellesJahr, aktuellerMonat);
+                aktuellerTag = 1;
+                setToggleButtons(yearMonthObject.lengthOfMonth());
             }
         });
+
     }
 
     private void setToggleButtons(int daysInMonth) {
+
+	    hBox.getChildren().clear();
+
 		ToggleGroup toggleGroup = new ToggleGroup();
 
 		for(int i = 1; i<=daysInMonth;i++) {
@@ -129,17 +127,36 @@ public class ZeiterfassungController {
 					//button.setStyle("-fx-base: red;");
                     aktuellerTag = Integer.parseInt(button.getText());
 
-                    GregorianCalendar calendar = new GregorianCalendar(aktuellesJahr,Integer.parseInt(aktuellerMonat.getText()),aktuellerTag);
-                    Date date = calendar.getTime();
-
-                    zeiterfassungField.setText(Integer.toString(ZeiterfassungDAO.getZeiterfassung(date, 1)));
-
+                    getZeiterfassung();
+                    aktuellesDatum.setText(Integer.toString(aktuellerTag) + ". " + Integer.toString(aktuellerMonat) + " " + Integer.toString(aktuellesJahr));
                 }
             });
 			hBox.getChildren().addAll(button);
 		}
-
+        hBox.setAlignment(Pos.CENTER);
 		ToggleButton toggleButton = (ToggleButton) hBox.getChildren().get(aktuellerTag-1);
 		toggleButton.setSelected(true);
+
+        getZeiterfassung();
+        aktuellesDatum.setText(Integer.toString(aktuellerTag) + ". " + Integer.toString(aktuellerMonat) + " " + Integer.toString(aktuellesJahr));
 	}
+
+    private void updateZeitFeld() {
+        GregorianCalendar calendar = new GregorianCalendar(aktuellesJahr,aktuellerMonat,aktuellerTag);
+        Date date = calendar.getTime();
+
+        ZeiterfassungDAO.updateZeiterfassung(date, 1, Integer.parseInt(zeiterfassungField.getText()));
+    }
+
+    private void getZeiterfassung() {
+        GregorianCalendar calendar = new GregorianCalendar(aktuellesJahr,aktuellerMonat,aktuellerTag);
+        Date date = calendar.getTime();
+
+        zeiterfassungField.setText(Integer.toString(ZeiterfassungDAO.getZeiterfassung(date, 1)));
+    }
+
+
+    //TODO mehr als eine Zeiterfassung pro Tag Möglich
+    //TODO Erfassungen beim Tag anzeigen
+
 }

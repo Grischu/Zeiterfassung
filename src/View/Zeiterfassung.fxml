@@ -37,12 +37,7 @@
             <Font size="30.0" />
          </font>
       </Label>
-      <Label layoutX="32.0" layoutY="147.0" text="Monat: ">
-         <font>
-            <Font size="24.0" />
-         </font>
-      </Label>
-      <Label fx:id="aktuellerMonat" layoutX="114.0" layoutY="147.0" prefHeight="35.0" prefWidth="241.0" text="Dezember">
+      <Label fx:id="aktuellesDatum" layoutX="114.0" layoutY="147.0" prefHeight="35.0" prefWidth="241.0" text="Dezember">
          <font>
             <Font size="24.0" />
          </font>
