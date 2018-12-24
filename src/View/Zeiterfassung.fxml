@@ -53,11 +53,9 @@
       <Button layoutX="937.0" layoutY="149.0" mnemonicParsing="false" text="Heute" />
       <Button fx:id="naechsterMonat" layoutX="1067.0" layoutY="149.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="37.0" text="-&gt;" />
       <Label layoutX="104.0" layoutY="506.0" text="Zeiterfassung:" />
-      <Label layoutX="391.0" layoutY="506.0" text="Bis: " />
-      <Label layoutX="502.0" layoutY="506.0" text="Pause: " />
+      <Label layoutX="288.0" layoutY="506.0" text="Pause: " />
       <TextField fx:id="zeiterfassungField" layoutX="207.0" layoutY="501.0" prefHeight="31.0" prefWidth="71.0" />
-      <TextField layoutX="421.0" layoutY="502.0" prefHeight="31.0" prefWidth="71.0" />
-      <TextField layoutX="549.0" layoutY="501.0" prefHeight="31.0" prefWidth="71.0" />
-      <Button fx:id="erfassenButton" layoutX="290.0" layoutY="501.0" mnemonicParsing="false" text="Erfassen" />
+      <TextField layoutX="335.0" layoutY="501.0" prefHeight="31.0" prefWidth="71.0" />
+      <Button fx:id="erfassenButton" layoutX="416.0" layoutY="501.0" mnemonicParsing="false" text="Erfassen" />
    </children>
 </AnchorPane>

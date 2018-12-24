@@ -14,13 +14,8 @@ import java.util.List;
 public class ZeiterfassungDAO {
 
     public static void updateZeiterfassung(Date date, int user, int zeit) {
-        //String sql = "UPDATE FachDaten SET zeit = ?" + " WHERE datum = ? and user = ?";
-        //String sql = "INSERT OR REPLACE INTO Zeiterfassung (persId,zeit,datum) VALUES(?,?,?)";
         String sql = "UPDATE Zeiterfassung SET zeit = ? WHERE  persId = ? AND datum = ?";
 
-       /* String sql = "insert or replace into Zeiterfassung (persId,zeit,datum) values
-                ((select ID from Book where Name = "SearchName"), "SearchName", ...);
-*/
         // Connection conn = Datenbank.getConnection();
         try (Connection conn = Datenbank.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
@@ -54,8 +49,7 @@ public class ZeiterfassungDAO {
             pstmt.setInt(2, user);
 
             rs = pstmt.executeQuery();
-
-            result = rs.getInt("zeit");
+            if(!rs.isClosed()) result = rs.getInt("zeit");
 
         } catch (Exception a) {
             System.out.println(a.toString());
@@ -72,13 +66,8 @@ public class ZeiterfassungDAO {
     }
 
     public static void insertZeiterfassung(Date date, int user, int zeit) {
-        //String sql = "UPDATE FachDaten SET zeit = ?" + " WHERE datum = ? and user = ?";
         String sql = "INSERT INTO Zeiterfassung (persId,zeit,datum) VALUES(?,?,?)";
-        //String sql = "UPDATE Zeiterfassung SET zeit = ? WHERE  persId = ? AND datum = ?";
 
-       /* String sql = "insert or replace into Zeiterfassung (persId,zeit,datum) values
-                ((select ID from Book where Name = "SearchName"), "SearchName", ...);
-*/
         // Connection conn = Datenbank.getConnection();
         try (Connection conn = Datenbank.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
