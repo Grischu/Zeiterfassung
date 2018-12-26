@@ -158,5 +158,6 @@ public class ZeiterfassungController {
 
     //TODO mehr als eine Zeiterfassung pro Tag Möglich
     //TODO Erfassungen beim Tag anzeigen
+    //TODO ENUM MONAT
 
 }
