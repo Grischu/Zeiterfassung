@@ -1,5 +1,6 @@
 package Database;
 
+import Model.Zeiterfassung;
 import com.sun.xml.internal.bind.v2.model.core.ID;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -102,20 +103,27 @@ public class ZeiterfassungDAO {
         return result;
     }
 
-    public static ObservableList<TableColumn> getErfassungen(Date date, int user) {
-        ObservableList<TableColumn> result = FXCollections.observableArrayList();
-        ResultSet rs = null;
-        TableColumn tableColumn = new TableColumn();
+    public static ObservableList<Zeiterfassung> getErfassungen(Date date, int user) {
+        ResultSet r = null;
+        ObservableList<Zeiterfassung> result = FXCollections.observableArrayList();
         try {
-            System.out.println(convertUtilToSql(date).getTime());
-            rs = Datenbank.executeQuery("SELECT * from zeiterfassung where datum=" + convertUtilToSql(date).getTime() + " AND persId=" + user);
-            while (rs.next()) {
-                String zeit = rs.getString("zeit");
-                //tableColumn.setCellValueFactory(param -> zeit);
-                result.add(tableColumn);
+            r = Datenbank.executeQuery("SELECT * from zeiterfassung where datum=" + convertUtilToSql(date).getTime() + " AND persId=" + user);
+            while (r.next()) {
+                Zeiterfassung zeiterfassung = new Zeiterfassung();
+                zeiterfassung.setId(r.getInt("id"));
+                zeiterfassung.setZeit(r.getInt("zeit"));
+                zeiterfassung.setDatum(1);
+                result.add(zeiterfassung);
             }
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+        } catch (Exception a) {
+        } finally {
+            if (r != null) {
+                try {
+                    r.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
         }
         return result;
     }

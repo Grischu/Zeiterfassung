@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.HashMap;
 
 import Application.Main;
-import javafx.beans.property.IntegerProperty;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
@@ -32,12 +31,12 @@ public class ScreenController {
 	public void zeiterfassungOeffnen() {
 		ScreenController screenController = Main.getScreenController();
 		try {
-			screenController.addScreen("zeiterfassung", FXMLLoader.load(getClass().getClassLoader().getResource("View/Zeiterfassung.fxml")));
+			screenController.addScreen("Zeiterfassung", FXMLLoader.load(getClass().getResource("../View/Zeiterfassung.fxml")));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		screenController.activate("zeiterfassung");
+		screenController.activate("Zeiterfassung");
 	}
 
 	public void startseiteOeffnen() {

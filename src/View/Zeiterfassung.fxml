@@ -57,9 +57,9 @@
       <Button fx:id="erfassenButton" layoutX="690.0" layoutY="491.0" mnemonicParsing="false" text="Erfassen" />
       <TableView fx:id="erfassungTable" layoutX="97.0" layoutY="576.0" prefHeight="200.0" prefWidth="998.0">
         <columns>
-          <TableColumn fx:id="buchungsTable" prefWidth="329.0" text="Buchung" />
-          <TableColumn prefWidth="265.0" text="Zeit" />
-            <TableColumn prefWidth="392.0" text="Beschreibung" />
+          <TableColumn fx:id="buchungColumn" prefWidth="329.0" text="Buchung" />
+          <TableColumn fx:id="zeitColumn" prefWidth="265.0" text="Zeit" />
+            <TableColumn fx:id="beschreibungColumn" prefWidth="392.0" text="Beschreibung" />
         </columns>
       </TableView>
       <TextField fx:id="beschreibung" layoutX="904.0" layoutY="450.0" prefHeight="103.0" prefWidth="187.0" />

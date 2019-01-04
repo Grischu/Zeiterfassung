@@ -3,6 +3,8 @@ package Controller;
 import Database.Datenbank;
 import Database.ZeiterfassungDAO;
 import Model.MonatEnum;
+import Model.Zeiterfassung;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -43,8 +45,8 @@ public class ZeiterfassungController {
 	@FXML
 	private Button erfassenButton;
 
-	@FXML
-    private TableView erfassungTable;
+	//@FXML
+    //private TableView erfassungTable;
 
 	@FXML
     private ChoiceBox buchung;
@@ -56,7 +58,16 @@ public class ZeiterfassungController {
     private TextField beschreibung;
 
 	@FXML
-    private TableView<TableColumn> buchungsTable;
+    private TableView<Zeiterfassung> erfassungTable = new TableView<Zeiterfassung>();
+
+	@FXML
+    private TableColumn<Zeiterfassung, Integer> buchungColumn;
+
+    @FXML
+    private TableColumn<Zeiterfassung, Integer> zeitColumn;
+
+    @FXML
+    private TableColumn<Zeiterfassung, Integer> beschreibungColumn;
 
 	private int aktuellerTag;
     private int aktuellerMonat;
@@ -76,12 +87,13 @@ public class ZeiterfassungController {
 		setToggleButtons(daysInMonth);
         setMonateHandler();
         setBuchung();
-        setBuchungsTable();
+
 
 		erfassenButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
                 updateZeitFeld();
+                setBuchungsTable();
 			}
 		});
 	}
@@ -144,7 +156,7 @@ public class ZeiterfassungController {
                 public void handle(ActionEvent event) {
 					//button.setStyle("-fx-base: red;");
                     aktuellerTag = Integer.parseInt(button.getText());
-
+                    setBuchungsTable();
                     getZeiterfassung();
                     aktuellesDatum.setText(Integer.toString(aktuellerTag) + ". " + MonatEnum.getFromId(aktuellerMonat) + " " + Integer.toString(aktuellesJahr));
                 }
@@ -181,9 +193,14 @@ public class ZeiterfassungController {
     private void setBuchungsTable() {
         GregorianCalendar calendar = new GregorianCalendar(aktuellesJahr,aktuellerMonat,aktuellerTag);
         Date date = calendar.getTime();
-        //ZeiterfassungDAO.getErfassungen(date, 1)
 
-        //TODO Zeiterfassungsobjekt
+
+        buchungColumn.setCellValueFactory(cellData -> cellData.getValue().getId().asObject()); //TODO Buchung nicht ID
+        zeitColumn.setCellValueFactory(cellData -> cellData.getValue().getZeit().asObject());
+        beschreibungColumn.setCellValueFactory(cellData -> cellData.getValue().getDatum().asObject()); //TODO Beschreibung
+
+
+        erfassungTable.setItems(ZeiterfassungDAO.getErfassungen(date,1));
 
     }
 
