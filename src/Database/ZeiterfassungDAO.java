@@ -1,7 +1,11 @@
 package Database;
 
 import com.sun.xml.internal.bind.v2.model.core.ID;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.scene.control.TableColumn;
 
+import javax.xml.transform.Result;
 import java.awt.print.Book;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -81,6 +85,39 @@ public class ZeiterfassungDAO {
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    public static ObservableList<String> getBuchungen() {
+        ObservableList<String> result = FXCollections.observableArrayList();
+        ResultSet rs = null;
+        try {
+            rs = Datenbank.executeQuery("SELECT name FROM buchung");
+            while (rs.next()) {
+                String buchung = rs.getString("name");
+                result.add(buchung);
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return result;
+    }
+
+    public static ObservableList<TableColumn> getErfassungen(Date date, int user) {
+        ObservableList<TableColumn> result = FXCollections.observableArrayList();
+        ResultSet rs = null;
+        TableColumn tableColumn = new TableColumn();
+        try {
+            System.out.println(convertUtilToSql(date).getTime());
+            rs = Datenbank.executeQuery("SELECT * from zeiterfassung where datum=" + convertUtilToSql(date).getTime() + " AND persId=" + user);
+            while (rs.next()) {
+                String zeit = rs.getString("zeit");
+                //tableColumn.setCellValueFactory(param -> zeit);
+                result.add(tableColumn);
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return result;
     }
 
     private static java.sql.Date convertUtilToSql(java.util.Date uDate) {

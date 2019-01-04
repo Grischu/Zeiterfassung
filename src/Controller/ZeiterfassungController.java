@@ -2,6 +2,7 @@ package Controller;
 
 import Database.Datenbank;
 import Database.ZeiterfassungDAO;
+import Model.MonatEnum;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -42,6 +43,21 @@ public class ZeiterfassungController {
 	@FXML
 	private Button erfassenButton;
 
+	@FXML
+    private TableView erfassungTable;
+
+	@FXML
+    private ChoiceBox buchung;
+
+	@FXML
+    private TextField pause;
+
+	@FXML
+    private TextField beschreibung;
+
+	@FXML
+    private TableView<TableColumn> buchungsTable;
+
 	private int aktuellerTag;
     private int aktuellerMonat;
 	private int aktuellesJahr;
@@ -59,6 +75,8 @@ public class ZeiterfassungController {
 
 		setToggleButtons(daysInMonth);
         setMonateHandler();
+        setBuchung();
+        setBuchungsTable();
 
 		erfassenButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
@@ -79,7 +97,7 @@ public class ZeiterfassungController {
                 else {
                     aktuellerMonat = aktuellerMonat-1;
                 }
-                aktuellesDatum.setText(Integer.toString(aktuellerTag) + ". " + Integer.toString(aktuellerMonat) + " " + Integer.toString(aktuellesJahr));
+                aktuellesDatum.setText(Integer.toString(aktuellerTag) + ". " + MonatEnum.getFromId(aktuellerMonat) + " " + Integer.toString(aktuellesJahr));
                 updateZeitFeld();
 
                 YearMonth yearMonthObject = YearMonth.of(aktuellesJahr, aktuellerMonat);
@@ -98,7 +116,7 @@ public class ZeiterfassungController {
                 else {
                     aktuellerMonat = aktuellerMonat+1;
                 }
-                aktuellesDatum.setText(Integer.toString(aktuellerTag) + ". " + Integer.toString(aktuellerMonat) + " " + Integer.toString(aktuellesJahr));
+                aktuellesDatum.setText(Integer.toString(aktuellerTag) + ". " + MonatEnum.getFromId(aktuellerMonat) + " " + Integer.toString(aktuellesJahr));
                 updateZeitFeld();
 
                 YearMonth yearMonthObject = YearMonth.of(aktuellesJahr, aktuellerMonat);
@@ -128,7 +146,7 @@ public class ZeiterfassungController {
                     aktuellerTag = Integer.parseInt(button.getText());
 
                     getZeiterfassung();
-                    aktuellesDatum.setText(Integer.toString(aktuellerTag) + ". " + Integer.toString(aktuellerMonat) + " " + Integer.toString(aktuellesJahr));
+                    aktuellesDatum.setText(Integer.toString(aktuellerTag) + ". " + MonatEnum.getFromId(aktuellerMonat) + " " + Integer.toString(aktuellesJahr));
                 }
             });
 			hBox.getChildren().addAll(button);
@@ -138,7 +156,7 @@ public class ZeiterfassungController {
 		toggleButton.setSelected(true);
 
         getZeiterfassung();
-        aktuellesDatum.setText(Integer.toString(aktuellerTag) + ". " + Integer.toString(aktuellerMonat) + " " + Integer.toString(aktuellesJahr));
+        aktuellesDatum.setText(Integer.toString(aktuellerTag) + ". " + MonatEnum.getFromId(aktuellerMonat) + " " + Integer.toString(aktuellesJahr));
 	}
 
     private void updateZeitFeld() {
@@ -155,9 +173,27 @@ public class ZeiterfassungController {
         zeiterfassungField.setText(Integer.toString(ZeiterfassungDAO.getZeiterfassung(date, 1)));
     }
 
+    private void setBuchung() {
+	    //buchung.setValue("Bitte wählen");
+	    buchung.setItems(ZeiterfassungDAO.getBuchungen());
+    }
+
+    private void setBuchungsTable() {
+        GregorianCalendar calendar = new GregorianCalendar(aktuellesJahr,aktuellerMonat,aktuellerTag);
+        Date date = calendar.getTime();
+        //ZeiterfassungDAO.getErfassungen(date, 1)
+
+        //TODO Zeiterfassungsobjekt
+
+    }
+
 
     //TODO mehr als eine Zeiterfassung pro Tag Möglich
     //TODO Erfassungen beim Tag anzeigen
-    //TODO ENUM MONAT
+    //TODO Vererbung / Interface
+    //TODO Sortierung
+    //TODO Kalender zum funktionieren bringen
+    //TODO Pause
+    //TODO Login
 
 }
