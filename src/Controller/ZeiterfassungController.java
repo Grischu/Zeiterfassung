@@ -2,23 +2,21 @@ package Controller;
 
 import Database.Datenbank;
 import Database.ZeiterfassungDAO;
+import Model.Buchung;
 import Model.MonatEnum;
 import Model.Zeiterfassung;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
+import javafx.util.StringConverter;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.List;
 
 public class ZeiterfassungController {
 
@@ -49,7 +47,7 @@ public class ZeiterfassungController {
     //private TableView erfassungTable;
 
 	@FXML
-    private ChoiceBox buchung;
+    private ChoiceBox<Buchung> buchung;
 
 	@FXML
     private TextField pause;
@@ -61,13 +59,16 @@ public class ZeiterfassungController {
     private TableView<Zeiterfassung> erfassungTable = new TableView<Zeiterfassung>();
 
 	@FXML
-    private TableColumn<Zeiterfassung, Integer> buchungColumn;
+    private TableColumn<Zeiterfassung, String> buchungColumn;
 
     @FXML
     private TableColumn<Zeiterfassung, Integer> zeitColumn;
 
     @FXML
     private TableColumn<Zeiterfassung, Integer> beschreibungColumn;
+
+    @FXML
+    private Label zeitField;
 
 	private int aktuellerTag;
     private int aktuellerMonat;
@@ -87,12 +88,14 @@ public class ZeiterfassungController {
 		setToggleButtons(daysInMonth);
         setMonateHandler();
         setBuchung();
+        setBuchungsTable();
 
 
 		erfassenButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-                updateZeitFeld();
+                updateZeit();
+                setZeitField();
                 setBuchungsTable();
 			}
 		});
@@ -110,7 +113,7 @@ public class ZeiterfassungController {
                     aktuellerMonat = aktuellerMonat-1;
                 }
                 aktuellesDatum.setText(Integer.toString(aktuellerTag) + ". " + MonatEnum.getFromId(aktuellerMonat) + " " + Integer.toString(aktuellesJahr));
-                updateZeitFeld();
+                updateZeit();
 
                 YearMonth yearMonthObject = YearMonth.of(aktuellesJahr, aktuellerMonat);
                 aktuellerTag = 1;
@@ -129,7 +132,7 @@ public class ZeiterfassungController {
                     aktuellerMonat = aktuellerMonat+1;
                 }
                 aktuellesDatum.setText(Integer.toString(aktuellerTag) + ". " + MonatEnum.getFromId(aktuellerMonat) + " " + Integer.toString(aktuellesJahr));
-                updateZeitFeld();
+                updateZeit();
 
                 YearMonth yearMonthObject = YearMonth.of(aktuellesJahr, aktuellerMonat);
                 aktuellerTag = 1;
@@ -157,7 +160,7 @@ public class ZeiterfassungController {
 					//button.setStyle("-fx-base: red;");
                     aktuellerTag = Integer.parseInt(button.getText());
                     setBuchungsTable();
-                    getZeiterfassung();
+                    setZeitField();
                     aktuellesDatum.setText(Integer.toString(aktuellerTag) + ". " + MonatEnum.getFromId(aktuellerMonat) + " " + Integer.toString(aktuellesJahr));
                 }
             });
@@ -167,27 +170,44 @@ public class ZeiterfassungController {
 		ToggleButton toggleButton = (ToggleButton) hBox.getChildren().get(aktuellerTag-1);
 		toggleButton.setSelected(true);
 
-        getZeiterfassung();
+        setZeitField();
         aktuellesDatum.setText(Integer.toString(aktuellerTag) + ". " + MonatEnum.getFromId(aktuellerMonat) + " " + Integer.toString(aktuellesJahr));
 	}
 
-    private void updateZeitFeld() {
+    private void updateZeit() {
         GregorianCalendar calendar = new GregorianCalendar(aktuellesJahr,aktuellerMonat,aktuellerTag);
         Date date = calendar.getTime();
 
-        ZeiterfassungDAO.updateZeiterfassung(date, 1, Integer.parseInt(zeiterfassungField.getText()));
+        ZeiterfassungDAO.updateZeiterfassung(date, 1, Integer.parseInt(zeiterfassungField.getText()), buchung.getValue().getId());
     }
 
-    private void getZeiterfassung() {
+    private void setZeitField() {
         GregorianCalendar calendar = new GregorianCalendar(aktuellesJahr,aktuellerMonat,aktuellerTag);
         Date date = calendar.getTime();
-
-        zeiterfassungField.setText(Integer.toString(ZeiterfassungDAO.getZeiterfassung(date, 1)));
+        zeitField.setText(Integer.toString(ZeiterfassungDAO.getZeiterfassung(date, 1)));
     }
 
     private void setBuchung() {
 	    //buchung.setValue("Bitte wählen");
+        //ObservableList<Buchung> buchungList = FXCollections.observableArrayList();
+
 	    buchung.setItems(ZeiterfassungDAO.getBuchungen());
+        buchung.setConverter(new StringConverter<Buchung>() {
+            //Wichtig für darstellung
+            @Override
+            public String toString(Buchung buchung) {
+                return buchung.getBuchungName().getValue();
+            }
+            //Nicht gebraucht
+            @Override
+            public Buchung fromString(String string) {
+                return null;
+            }
+        });
+        buchung.getSelectionModel().selectFirst();
+	    //buchungList.addAll(buchung.getValue().getBuchungName());
+
+
     }
 
     private void setBuchungsTable() {
@@ -195,8 +215,9 @@ public class ZeiterfassungController {
         Date date = calendar.getTime();
 
 
-        buchungColumn.setCellValueFactory(cellData -> cellData.getValue().getId().asObject()); //TODO Buchung nicht ID
+
         zeitColumn.setCellValueFactory(cellData -> cellData.getValue().getZeit().asObject());
+        buchungColumn.setCellValueFactory(cellData -> cellData.getValue().getBuchung().getBuchungName()); //TODO Buchung nicht ID
         beschreibungColumn.setCellValueFactory(cellData -> cellData.getValue().getDatum().asObject()); //TODO Beschreibung
 
 
@@ -204,13 +225,9 @@ public class ZeiterfassungController {
 
     }
 
-
-    //TODO mehr als eine Zeiterfassung pro Tag Möglich
-    //TODO Erfassungen beim Tag anzeigen
-    //TODO Vererbung / Interface
-    //TODO Sortierung
-    //TODO Kalender zum funktionieren bringen
     //TODO Pause
     //TODO Login
-
+    //TODO Vererbung / Interface -> Vielleicht interface über alle Controller
+    //TODO Sortierung Buchung und Buchungtabelle
+    //TODO Kalender zum funktionieren bringen - > Nicht wichtig
 }

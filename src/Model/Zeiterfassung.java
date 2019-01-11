@@ -10,6 +10,7 @@ import java.util.Date;
 public class Zeiterfassung {
 
     private IntegerProperty id;
+    private Buchung buchung;
     private IntegerProperty zeit;
     private IntegerProperty datum;
 
@@ -41,5 +42,13 @@ public class Zeiterfassung {
 
     public void setDatum(int datum) {
         this.datum.set(datum);
+    }
+
+    public Buchung getBuchung() {
+        return buchung;
+    }
+
+    public void setBuchung(Buchung buchung) {
+        this.buchung = buchung;
     }
 }

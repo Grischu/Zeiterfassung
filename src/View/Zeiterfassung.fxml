@@ -66,5 +66,7 @@
       <ChoiceBox fx:id="buchung" layoutX="186.0" layoutY="491.0" prefWidth="150.0" />
       <Label layoutX="789.0" layoutY="496.0" text="Beschreibung" />
       <Label layoutX="97.0" layoutY="496.0" text="Buchung" />
+      <Label fx:id="zeitField" layoutX="545.0" layoutY="413.0" text="Zeit" />
+      <Label layoutX="392.0" layoutY="413.0" text="Zeit gearbeitet heute:" />
    </children>
 </AnchorPane>

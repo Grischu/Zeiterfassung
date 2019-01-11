@@ -1,7 +1,10 @@
 package Database;
 
+import Model.Buchung;
 import Model.Zeiterfassung;
+import com.sun.xml.internal.bind.v2.TODO;
 import com.sun.xml.internal.bind.v2.model.core.ID;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableColumn;
@@ -18,14 +21,16 @@ import java.util.List;
 
 public class ZeiterfassungDAO {
 
-    public static void updateZeiterfassung(Date date, int user, int zeit) {
-        String sql = "UPDATE Zeiterfassung SET zeit = ? WHERE  persId = ? AND datum = ?";
+    public static void updateZeiterfassung(Date date, int user, int zeit, int buchungId) {
+        //String sql = "UPDATE Zeiterfassung SET zeit = ? WHERE  persId = ? AND datum = ?";
+        String sql = "INSERT INTO Zeiterfassung (persid,zeit,datum,buchungId) values(" +
+                user + "," + zeit + "," + date.getTime() + "," + buchungId + ");";
 
         // Connection conn = Datenbank.getConnection();
         try (Connection conn = Datenbank.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             // set the corresponding param
-            pstmt.setInt(1, zeit);
+            /*pstmt.setInt(1, zeit);
             pstmt.setInt(2, user);
             pstmt.setDate(3, convertUtilToSql(date));
 
@@ -35,7 +40,8 @@ public class ZeiterfassungDAO {
             if(id == 0) {
                 insertZeiterfassung(date, user, zeit);
             }
-            System.out.println(id);
+            System.out.println(id);*/
+            pstmt.execute();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -44,18 +50,22 @@ public class ZeiterfassungDAO {
     public static int getZeiterfassung(Date date, int user) {
         ResultSet rs = null;
         int result = 0;
-        String sql = "SELECT zeit from zeiterfassung where datum=? AND persId=?";
+        String sql = "SELECT * from zeiterfassung where datum=" + date.getTime() + " AND persId=" + user;
         Connection conn = Datenbank.getConnection();
 
 
         try {
+            rs = Datenbank.executeQuery(sql);
+            while (rs.next()) {
+                result += rs.getInt("zeit");
+            }/*
             PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.setDate(1, convertUtilToSql(date));
             pstmt.setInt(2, user);
 
             rs = pstmt.executeQuery();
-            if(!rs.isClosed()) result = rs.getInt("zeit");
-
+            if(!rs.isClosed()) result = rs.getInt("zeit"); //TODO ALLE HOLEN DANN ADDIEREN
+*/
         } catch (Exception a) {
             System.out.println(a.toString());
         } finally {
@@ -88,13 +98,16 @@ public class ZeiterfassungDAO {
         }
     }
 
-    public static ObservableList<String> getBuchungen() {
-        ObservableList<String> result = FXCollections.observableArrayList();
+    public static ObservableList<Buchung> getBuchungen() {
+        ObservableList<Buchung> result = FXCollections.observableArrayList();
         ResultSet rs = null;
         try {
-            rs = Datenbank.executeQuery("SELECT name FROM buchung");
+            rs = Datenbank.executeQuery("SELECT * FROM buchung");
             while (rs.next()) {
-                String buchung = rs.getString("name");
+                Buchung buchung = new Buchung();
+                System.out.println(rs.getInt("ID"));
+                buchung.setId(rs.getInt("ID"));
+                buchung.setBuchungName(rs.getString("name"));
                 result.add(buchung);
             }
         } catch (Exception e) {
@@ -110,11 +123,38 @@ public class ZeiterfassungDAO {
             r = Datenbank.executeQuery("SELECT * from zeiterfassung where datum=" + convertUtilToSql(date).getTime() + " AND persId=" + user);
             while (r.next()) {
                 Zeiterfassung zeiterfassung = new Zeiterfassung();
+                Buchung buchung = new Buchung();
+
                 zeiterfassung.setId(r.getInt("id"));
                 zeiterfassung.setZeit(r.getInt("zeit"));
+
+                buchung.setId(r.getInt("buchungId"));
+                buchung.setBuchungName(getBuchungNameFromId(r.getInt("buchungId")));
+
+                zeiterfassung.setBuchung(buchung);
                 zeiterfassung.setDatum(1);
+
                 result.add(zeiterfassung);
             }
+        } catch (Exception a) {
+        } finally {
+            if (r != null) {
+                try {
+                    r.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return result;
+    }
+
+    private static String getBuchungNameFromId(int buchungId) {
+        ResultSet r;
+        String result = null;
+        r = Datenbank.executeQuery("SELECT name FROM buchung WHERE id =" + buchungId);
+        try {
+            result = r.getString("name");
         } catch (Exception a) {
         } finally {
             if (r != null) {
