@@ -1,9 +1,13 @@
 package Model;
 
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
+import Application.Main;
+import Controller.ZeiterfassungController;
+import Database.ZeiterfassungDAO;
+import javafx.beans.property.*;
+import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.control.Button;
 
 import java.util.Date;
 
@@ -11,13 +15,23 @@ public class Zeiterfassung {
 
     private IntegerProperty id;
     private Buchung buchung;
-    private IntegerProperty zeit;
+    private DoubleProperty zeit;
     private IntegerProperty datum;
+    //private Button loeschenButton;
 
     public Zeiterfassung() {
         this.id = new SimpleIntegerProperty();
-        this.zeit = new SimpleIntegerProperty();
+        this.zeit = new SimpleDoubleProperty();
         this.datum = new SimpleIntegerProperty();
+        //this.loeschenButton = new Button("Loeschen");
+        /*this.loeschenButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+
+                ZeiterfassungDAO.zeiterfassungLoeschen(id.get());
+
+            }
+        });*/
     }
 
     public IntegerProperty getId() {
@@ -28,11 +42,11 @@ public class Zeiterfassung {
         this.id.set(id);
     }
 
-    public IntegerProperty getZeit() {
+    public DoubleProperty getZeit() {
         return zeit;
     }
 
-    public void setZeit(int zeit) {
+    public void setZeit(double zeit) {
         this.zeit.set(zeit);
     }
 
@@ -51,4 +65,13 @@ public class Zeiterfassung {
     public void setBuchung(Buchung buchung) {
         this.buchung = buchung;
     }
+
+   /* public ObservableValue<Button> getLoeschenButton() {
+
+        return new SimpleObjectProperty<Button>(loeschenButton);
+    }
+
+    public void setLoeschenButton(Button loeschenButton) {
+        this.loeschenButton = loeschenButton;
+    }*/
 }

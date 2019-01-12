@@ -8,7 +8,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
-public class StartfensterController {
+public class StartfensterController implements ControllerInterface {
 
 	@FXML
     private Button loginButton;
@@ -20,7 +20,9 @@ public class StartfensterController {
     private PasswordField passwort;
 	
 	@FXML
-    private void initialize () {
+    public void initialize () {
+
+
 
 		loginButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override

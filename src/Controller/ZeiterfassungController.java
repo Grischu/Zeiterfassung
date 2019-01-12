@@ -5,6 +5,8 @@ import Database.ZeiterfassungDAO;
 import Model.Buchung;
 import Model.MonatEnum;
 import Model.Zeiterfassung;
+import javafx.collections.ObservableList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -15,10 +17,11 @@ import javafx.util.StringConverter;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-public class ZeiterfassungController {
+public class ZeiterfassungController implements ControllerInterface{
 
 	Datenbank datenBank = new Datenbank();
 
@@ -43,9 +46,6 @@ public class ZeiterfassungController {
 	@FXML
 	private Button erfassenButton;
 
-	//@FXML
-    //private TableView erfassungTable;
-
 	@FXML
     private ChoiceBox<Buchung> buchung;
 
@@ -62,10 +62,13 @@ public class ZeiterfassungController {
     private TableColumn<Zeiterfassung, String> buchungColumn;
 
     @FXML
-    private TableColumn<Zeiterfassung, Integer> zeitColumn;
+    private TableColumn<Zeiterfassung, Double> zeitColumn;
 
     @FXML
     private TableColumn<Zeiterfassung, Integer> beschreibungColumn;
+
+    @FXML
+    private TableColumn aktionColumn;
 
     @FXML
     private Label zeitField;
@@ -75,7 +78,7 @@ public class ZeiterfassungController {
 	private int aktuellesJahr;
 
 	@FXML
-	private void initialize () {
+	public void initialize () {
 
 		// Get the number of days in that month
         YearMonth yearMonthObject = YearMonth.now();
@@ -89,17 +92,20 @@ public class ZeiterfassungController {
         setMonateHandler();
         setBuchung();
         setBuchungsTable();
+        setErfassenButton();
 
+    }
 
-		erfassenButton.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent event) {
+    private void setErfassenButton() {
+        erfassenButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
                 updateZeit();
                 setZeitField();
                 setBuchungsTable();
-			}
-		});
-	}
+            }
+        });
+    }
 
     private void setMonateHandler() {
         letzterMonat.setOnAction(new EventHandler<ActionEvent>() {
@@ -113,8 +119,9 @@ public class ZeiterfassungController {
                     aktuellerMonat = aktuellerMonat-1;
                 }
                 aktuellesDatum.setText(Integer.toString(aktuellerTag) + ". " + MonatEnum.getFromId(aktuellerMonat) + " " + Integer.toString(aktuellesJahr));
-                updateZeit();
 
+                setZeitField();
+                setBuchungsTable();
                 YearMonth yearMonthObject = YearMonth.of(aktuellesJahr, aktuellerMonat);
                 aktuellerTag = 1;
                 setToggleButtons(yearMonthObject.lengthOfMonth());
@@ -132,8 +139,9 @@ public class ZeiterfassungController {
                     aktuellerMonat = aktuellerMonat+1;
                 }
                 aktuellesDatum.setText(Integer.toString(aktuellerTag) + ". " + MonatEnum.getFromId(aktuellerMonat) + " " + Integer.toString(aktuellesJahr));
-                updateZeit();
 
+                setZeitField();
+                setBuchungsTable();
                 YearMonth yearMonthObject = YearMonth.of(aktuellesJahr, aktuellerMonat);
                 aktuellerTag = 1;
                 setToggleButtons(yearMonthObject.lengthOfMonth());
@@ -178,19 +186,17 @@ public class ZeiterfassungController {
         GregorianCalendar calendar = new GregorianCalendar(aktuellesJahr,aktuellerMonat,aktuellerTag);
         Date date = calendar.getTime();
 
-        ZeiterfassungDAO.updateZeiterfassung(date, 1, Integer.parseInt(zeiterfassungField.getText()), buchung.getValue().getId());
+        ZeiterfassungDAO.updateZeiterfassung(date, 1, Double.parseDouble(zeiterfassungField.getText()), buchung.getValue().getId());
     }
 
     private void setZeitField() {
         GregorianCalendar calendar = new GregorianCalendar(aktuellesJahr,aktuellerMonat,aktuellerTag);
         Date date = calendar.getTime();
-        zeitField.setText(Integer.toString(ZeiterfassungDAO.getZeiterfassung(date, 1)));
+        zeitField.setText(Double.toString(ZeiterfassungDAO.getZeiterfassung(date, 1)));
     }
 
     private void setBuchung() {
-	    //buchung.setValue("Bitte wählen");
-        //ObservableList<Buchung> buchungList = FXCollections.observableArrayList();
-
+	    //buchung.setItems(new SortedList<Buchung>(ZeiterfassungDAO.getBuchungen()));
 	    buchung.setItems(ZeiterfassungDAO.getBuchungen());
         buchung.setConverter(new StringConverter<Buchung>() {
             //Wichtig für darstellung
@@ -205,29 +211,30 @@ public class ZeiterfassungController {
             }
         });
         buchung.getSelectionModel().selectFirst();
-	    //buchungList.addAll(buchung.getValue().getBuchungName());
-
-
     }
 
     private void setBuchungsTable() {
         GregorianCalendar calendar = new GregorianCalendar(aktuellesJahr,aktuellerMonat,aktuellerTag);
         Date date = calendar.getTime();
 
-
-
         zeitColumn.setCellValueFactory(cellData -> cellData.getValue().getZeit().asObject());
-        buchungColumn.setCellValueFactory(cellData -> cellData.getValue().getBuchung().getBuchungName()); //TODO Buchung nicht ID
+        buchungColumn.setCellValueFactory(cellData -> cellData.getValue().getBuchung().getBuchungName());
         beschreibungColumn.setCellValueFactory(cellData -> cellData.getValue().getDatum().asObject()); //TODO Beschreibung
 
+        aktionColumn.setCellFactory(ActionButtonTableCell.<Zeiterfassung>forTableColumn("Löschen", (Zeiterfassung zeiterfassung) -> {
+            erfassungTable.getItems().remove(zeiterfassung);
+            ZeiterfassungDAO.zeiterfassungLoeschen(zeiterfassung.getId().get());
+            setZeitField();
+            return zeiterfassung;
+        }));
 
         erfassungTable.setItems(ZeiterfassungDAO.getErfassungen(date,1));
-
+        erfassungTable.getSortOrder().add(buchungColumn);
     }
 
-    //TODO Pause
+    //TODO Tabelle nach löschen aktualisieren
+    //TODO Pause -> Nicht wichtig
     //TODO Login
-    //TODO Vererbung / Interface -> Vielleicht interface über alle Controller
-    //TODO Sortierung Buchung und Buchungtabelle
+    //TODO Sortierung Buchung
     //TODO Kalender zum funktionieren bringen - > Nicht wichtig
 }
