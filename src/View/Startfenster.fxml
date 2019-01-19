@@ -1,43 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import com.jfoenix.controls.JFXPasswordField?>
+<?import com.jfoenix.controls.JFXTextField?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Menu?>
-<?import javafx.scene.control.MenuBar?>
-<?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.PasswordField?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
 <AnchorPane prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.StartfensterController">
    <children>
-      <MenuBar layoutY="-2.0" prefHeight="32.0" prefWidth="1200.0">
-        <menus>
-          <Menu mnemonicParsing="false" text="File">
-            <items>
-              <MenuItem mnemonicParsing="false" text="Close" />
-            </items>
-          </Menu>
-          <Menu mnemonicParsing="false" text="Edit">
-            <items>
-              <MenuItem mnemonicParsing="false" text="Delete" />
-            </items>
-          </Menu>
-          <Menu mnemonicParsing="false" text="Help">
-            <items>
-              <MenuItem mnemonicParsing="false" text="About" />
-            </items>
-          </Menu>
-        </menus>
-      </MenuBar>
-      <Button fx:id="loginButton" layoutX="572.0" layoutY="418.0" mnemonicParsing="false" text="Login" />
-      <PasswordField fx:id="passwort" layoutX="507.0" layoutY="350.0" promptText="Passwort" />
-      <TextField fx:id="benutzerName" layoutX="507.0" layoutY="266.0" promptText="Benutzername" />
       <Label layoutX="481.0" layoutY="120.0" text="Zeiterfassung">
          <font>
             <Font size="40.0" />
          </font>
       </Label>
+      <JFXTextField fx:id="benutzerName" layoutX="516.0" layoutY="266.0" promptText="Benutzername" />
+      <JFXPasswordField fx:id="passwort" layoutX="516.0" layoutY="350.0" promptText="Passwort" />
+      <Button fx:id="loginButton" layoutX="572.0" layoutY="418.0" mnemonicParsing="false" text="Login" />
    </children>
 </AnchorPane>

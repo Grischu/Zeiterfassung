@@ -1,6 +1,10 @@
 package Controller;
 
 import Application.Main;
+import Database.LoginDAO;
+import Interface.ControllerInterface;
+import com.jfoenix.controls.JFXPasswordField;
+import com.jfoenix.controls.JFXTextField;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -14,24 +18,23 @@ public class StartfensterController implements ControllerInterface {
     private Button loginButton;
 
 	@FXML
-	private TextField benutzerName;
+	private JFXTextField benutzerName;
 
 	@FXML
-    private PasswordField passwort;
+    private JFXPasswordField passwort;
 	
 	@FXML
     public void initialize () {
-
-
-
-		loginButton.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent event) {
-					Main.getScreenController().zeiterfassungOeffnen();
-				}
-		});
+        setLoginButton();
     }
-	
-	
 
+    private void setLoginButton() {
+        loginButton.setOnAction(event -> {
+            int user = LoginDAO.login(benutzerName.getText(), passwort.getText());
+            if(user != 0) {
+                Main.getScreenController().zeiterfassungOeffnen();
+
+            }
+        });
+    }
 }

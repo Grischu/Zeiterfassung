@@ -17,21 +17,11 @@ public class Zeiterfassung {
     private Buchung buchung;
     private DoubleProperty zeit;
     private IntegerProperty datum;
-    //private Button loeschenButton;
 
     public Zeiterfassung() {
         this.id = new SimpleIntegerProperty();
         this.zeit = new SimpleDoubleProperty();
         this.datum = new SimpleIntegerProperty();
-        //this.loeschenButton = new Button("Loeschen");
-        /*this.loeschenButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-
-                ZeiterfassungDAO.zeiterfassungLoeschen(id.get());
-
-            }
-        });*/
     }
 
     public IntegerProperty getId() {
@@ -65,13 +55,4 @@ public class Zeiterfassung {
     public void setBuchung(Buchung buchung) {
         this.buchung = buchung;
     }
-
-   /* public ObservableValue<Button> getLoeschenButton() {
-
-        return new SimpleObjectProperty<Button>(loeschenButton);
-    }
-
-    public void setLoeschenButton(Button loeschenButton) {
-        this.loeschenButton = loeschenButton;
-    }*/
 }

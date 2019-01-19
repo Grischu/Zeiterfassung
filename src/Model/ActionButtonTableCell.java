@@ -1,4 +1,4 @@
-package Controller;
+package Model;
 
 import java.util.function.Function;
 import javafx.event.ActionEvent;

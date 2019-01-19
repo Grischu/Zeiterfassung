@@ -2,11 +2,11 @@ package Controller;
 
 import Database.Datenbank;
 import Database.ZeiterfassungDAO;
+import Interface.ControllerInterface;
+import Model.ActionButtonTableCell;
 import Model.Buchung;
 import Model.MonatEnum;
 import Model.Zeiterfassung;
-import javafx.collections.ObservableList;
-import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -17,59 +17,40 @@ import javafx.util.StringConverter;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
-import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-public class ZeiterfassungController implements ControllerInterface{
-
-	Datenbank datenBank = new Datenbank();
-
+public class ZeiterfassungController implements ControllerInterface {
 	@FXML
 	private HBox hBox;
-
 	@FXML
     private DatePicker kalender;
-
 	@FXML
     private Button letzterMonat;
-
 	@FXML
     private Button naechsterMonat;
-
 	@FXML
     private Label aktuellesDatum;
-
 	@FXML
 	private TextField zeiterfassungField;
-
 	@FXML
 	private Button erfassenButton;
-
 	@FXML
     private ChoiceBox<Buchung> buchung;
-
 	@FXML
     private TextField pause;
-
 	@FXML
     private TextField beschreibung;
-
 	@FXML
     private TableView<Zeiterfassung> erfassungTable = new TableView<Zeiterfassung>();
-
 	@FXML
     private TableColumn<Zeiterfassung, String> buchungColumn;
-
     @FXML
     private TableColumn<Zeiterfassung, Double> zeitColumn;
-
     @FXML
     private TableColumn<Zeiterfassung, Integer> beschreibungColumn;
-
     @FXML
     private TableColumn aktionColumn;
-
     @FXML
     private Label zeitField;
 
@@ -79,106 +60,88 @@ public class ZeiterfassungController implements ControllerInterface{
 
 	@FXML
 	public void initialize () {
-
-		// Get the number of days in that month
-        YearMonth yearMonthObject = YearMonth.now();
-		int daysInMonth = yearMonthObject.lengthOfMonth();
-		aktuellerMonat = yearMonthObject.getMonth().getValue();
-		LocalDate localDate = LocalDate.now();
-		aktuellerTag =  localDate.getDayOfMonth();
-		aktuellesJahr = localDate.getYear();
-
-		setToggleButtons(daysInMonth);
+	    aktuellesDatumInitialisieren();
         setMonateHandler();
         setBuchung();
         setBuchungsTable();
         setErfassenButton();
+    }
 
+    private void aktuellesDatumInitialisieren() {
+        YearMonth yearMonthObject = YearMonth.now();
+        int daysInMonth = yearMonthObject.lengthOfMonth();
+        aktuellerMonat = yearMonthObject.getMonth().getValue();
+        LocalDate localDate = LocalDate.now();
+        aktuellerTag =  localDate.getDayOfMonth();
+        aktuellesJahr = localDate.getYear();
+
+        setToggleButtons(daysInMonth);
     }
 
     private void setErfassenButton() {
-        erfassenButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                updateZeit();
-                setZeitField();
-                setBuchungsTable();
-            }
+        erfassenButton.setOnAction(event -> {
+            updateZeit();
+            setZeitField();
+            setBuchungsTable();
         });
     }
 
     private void setMonateHandler() {
-        letzterMonat.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                if(aktuellerMonat == 1) {
-                    aktuellerMonat = 12;
-                    aktuellesJahr = aktuellesJahr-1;
-                }
-                else {
-                    aktuellerMonat = aktuellerMonat-1;
-                }
-                aktuellesDatum.setText(Integer.toString(aktuellerTag) + ". " + MonatEnum.getFromId(aktuellerMonat) + " " + Integer.toString(aktuellesJahr));
-
-                setZeitField();
-                setBuchungsTable();
-                YearMonth yearMonthObject = YearMonth.of(aktuellesJahr, aktuellerMonat);
-                aktuellerTag = 1;
-                setToggleButtons(yearMonthObject.lengthOfMonth());
+        letzterMonat.setOnAction(event -> {
+            if(aktuellerMonat == 1) {
+                aktuellerMonat = 12;
+                aktuellesJahr = aktuellesJahr-1;
             }
+            else {
+                aktuellerMonat = aktuellerMonat-1;
+            }
+            monatWechseln();
         });
 
-        naechsterMonat.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                if(aktuellerMonat == 12) {
-                    aktuellerMonat = 1;
-                    aktuellesJahr = aktuellesJahr+1;
-                }
-                else {
-                    aktuellerMonat = aktuellerMonat+1;
-                }
-                aktuellesDatum.setText(Integer.toString(aktuellerTag) + ". " + MonatEnum.getFromId(aktuellerMonat) + " " + Integer.toString(aktuellesJahr));
-
-                setZeitField();
-                setBuchungsTable();
-                YearMonth yearMonthObject = YearMonth.of(aktuellesJahr, aktuellerMonat);
-                aktuellerTag = 1;
-                setToggleButtons(yearMonthObject.lengthOfMonth());
+        naechsterMonat.setOnAction(event -> {
+            if(aktuellerMonat == 12) {
+                aktuellerMonat = 1;
+                aktuellesJahr = aktuellesJahr+1;
             }
+            else {
+                aktuellerMonat = aktuellerMonat+1;
+            }
+            monatWechseln();
         });
 
     }
 
+    private void monatWechseln() {
+        aktuellerTag = 1;
+        aktuellesDatum.setText(Integer.toString(aktuellerTag) + ". " + MonatEnum.getFromId(aktuellerMonat) + " " + Integer.toString(aktuellesJahr));
+
+        setZeitField();
+        setBuchungsTable();
+        YearMonth yearMonthObject = YearMonth.of(aktuellesJahr, aktuellerMonat);
+        setToggleButtons(yearMonthObject.lengthOfMonth());
+    }
+
     private void setToggleButtons(int daysInMonth) {
-
 	    hBox.getChildren().clear();
-
 		ToggleGroup toggleGroup = new ToggleGroup();
 
 		for(int i = 1; i<=daysInMonth;i++) {
-
 		    ToggleButton button = new ToggleButton(Integer.toString(i));
-
 		    button.setToggleGroup(toggleGroup);
-
-            button.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-					//button.setStyle("-fx-base: red;");
-                    aktuellerTag = Integer.parseInt(button.getText());
-                    setBuchungsTable();
-                    setZeitField();
-                    aktuellesDatum.setText(Integer.toString(aktuellerTag) + ". " + MonatEnum.getFromId(aktuellerMonat) + " " + Integer.toString(aktuellesJahr));
-                }
+            button.setOnAction(event -> {
+                //button.setStyle("-fx-base: red;");
+                aktuellerTag = Integer.parseInt(button.getText());
+                setBuchungsTable();
+                setZeitField();
+                aktuellesDatum.setText(Integer.toString(aktuellerTag) + ". " + MonatEnum.getFromId(aktuellerMonat) + " " + Integer.toString(aktuellesJahr));
             });
 			hBox.getChildren().addAll(button);
 		}
         hBox.setAlignment(Pos.CENTER);
 		ToggleButton toggleButton = (ToggleButton) hBox.getChildren().get(aktuellerTag-1);
 		toggleButton.setSelected(true);
-
         setZeitField();
+
         aktuellesDatum.setText(Integer.toString(aktuellerTag) + ". " + MonatEnum.getFromId(aktuellerMonat) + " " + Integer.toString(aktuellesJahr));
 	}
 
@@ -196,7 +159,6 @@ public class ZeiterfassungController implements ControllerInterface{
     }
 
     private void setBuchung() {
-	    //buchung.setItems(new SortedList<Buchung>(ZeiterfassungDAO.getBuchungen()));
 	    buchung.setItems(ZeiterfassungDAO.getBuchungen());
         buchung.setConverter(new StringConverter<Buchung>() {
             //Wichtig für darstellung
@@ -221,6 +183,7 @@ public class ZeiterfassungController implements ControllerInterface{
         buchungColumn.setCellValueFactory(cellData -> cellData.getValue().getBuchung().getBuchungName());
         beschreibungColumn.setCellValueFactory(cellData -> cellData.getValue().getDatum().asObject()); //TODO Beschreibung
 
+        //Dem Button die Logik für das Löschen hinzufügen
         aktionColumn.setCellFactory(ActionButtonTableCell.<Zeiterfassung>forTableColumn("Löschen", (Zeiterfassung zeiterfassung) -> {
             erfassungTable.getItems().remove(zeiterfassung);
             ZeiterfassungDAO.zeiterfassungLoeschen(zeiterfassung.getId().get());
@@ -232,9 +195,13 @@ public class ZeiterfassungController implements ControllerInterface{
         erfassungTable.getSortOrder().add(buchungColumn);
     }
 
-    //TODO Tabelle nach löschen aktualisieren
+    //TODO Login mit user übergeben
+    //TODO Beschreibung -> nicht wichtig
+    //TODO "Heute" -> nicht wichtig
+    //TODO On action im fxml definieren nicht wichtig
+    //TODO Sortierung Buchung -> Nicht wichtig
     //TODO Pause -> Nicht wichtig
-    //TODO Login
-    //TODO Sortierung Buchung
     //TODO Kalender zum funktionieren bringen - > Nicht wichtig
+    //TODO Farben wenn erfasst oder nicht -> Nicht wichtig
+    //TODO Maven
 }
