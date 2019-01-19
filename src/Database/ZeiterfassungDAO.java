@@ -2,22 +2,14 @@ package Database;
 
 import Model.Buchung;
 import Model.Zeiterfassung;
-import com.sun.xml.internal.bind.v2.TODO;
-import com.sun.xml.internal.bind.v2.model.core.ID;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.control.TableColumn;
 
-import javax.xml.transform.Result;
-import java.awt.print.Book;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 public class ZeiterfassungDAO {
 
