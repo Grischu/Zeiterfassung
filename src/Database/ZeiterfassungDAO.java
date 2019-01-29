@@ -51,7 +51,7 @@ public class ZeiterfassungDAO {
         return result;
     }
 
-    public static void insertZeiterfassung(Date date, int user, double zeit) {
+    /*public static void insertZeiterfassung(Date date, int user, double zeit) {
         String sql = "INSERT INTO Zeiterfassung (persId,zeit,datum) VALUES(?,?,?)";
 
         // Connection conn = Datenbank.getConnection();
@@ -67,7 +67,7 @@ public class ZeiterfassungDAO {
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-    }
+    }*/
 
     public static ObservableList<Buchung> getBuchungen() {
         ObservableList<Buchung> result = FXCollections.observableArrayList();

@@ -1,14 +1,12 @@
 package Controller;
 
-import Database.Datenbank;
+import Application.LoginApp;
 import Database.ZeiterfassungDAO;
 import Interface.ControllerInterface;
 import Model.ActionButtonTableCell;
 import Model.Buchung;
 import Model.MonatEnum;
 import Model.Zeiterfassung;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -149,13 +147,13 @@ public class ZeiterfassungController implements ControllerInterface {
         GregorianCalendar calendar = new GregorianCalendar(aktuellesJahr,aktuellerMonat,aktuellerTag);
         Date date = calendar.getTime();
 
-        ZeiterfassungDAO.updateZeiterfassung(date, 1, Double.parseDouble(zeiterfassungField.getText()), buchung.getValue().getId());
+        ZeiterfassungDAO.updateZeiterfassung(date, LoginApp.getUser(), Double.parseDouble(zeiterfassungField.getText()), buchung.getValue().getId());
     }
 
     private void setZeitField() {
         GregorianCalendar calendar = new GregorianCalendar(aktuellesJahr,aktuellerMonat,aktuellerTag);
         Date date = calendar.getTime();
-        zeitField.setText(Double.toString(ZeiterfassungDAO.getZeiterfassung(date, 1)));
+        zeitField.setText(Double.toString(ZeiterfassungDAO.getZeiterfassung(date, LoginApp.getUser())));
     }
 
     private void setBuchung() {
@@ -191,7 +189,7 @@ public class ZeiterfassungController implements ControllerInterface {
             return zeiterfassung;
         }));
 
-        erfassungTable.setItems(ZeiterfassungDAO.getErfassungen(date,1));
+        erfassungTable.setItems(ZeiterfassungDAO.getErfassungen(date, LoginApp.getUser()));
         erfassungTable.getSortOrder().add(buchungColumn);
     }
 
