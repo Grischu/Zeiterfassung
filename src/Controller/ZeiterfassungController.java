@@ -1,5 +1,6 @@
 package Controller;
 
+
 import Application.LoginApp;
 import Database.ZeiterfassungDAO;
 import Interface.ControllerInterface;
@@ -22,8 +23,6 @@ public class ZeiterfassungController implements ControllerInterface {
 	@FXML
 	private HBox hBox;
 	@FXML
-    private DatePicker kalender;
-	@FXML
     private Button letzterMonat;
 	@FXML
     private Button naechsterMonat;
@@ -36,8 +35,6 @@ public class ZeiterfassungController implements ControllerInterface {
 	@FXML
     private ChoiceBox<Buchung> buchung;
 	@FXML
-    private TextField pause;
-	@FXML
     private TextField beschreibung;
 	@FXML
     private TableView<Zeiterfassung> erfassungTable = new TableView<Zeiterfassung>();
@@ -46,7 +43,7 @@ public class ZeiterfassungController implements ControllerInterface {
     @FXML
     private TableColumn<Zeiterfassung, Double> zeitColumn;
     @FXML
-    private TableColumn<Zeiterfassung, Integer> beschreibungColumn;
+    private TableColumn<Zeiterfassung, String> beschreibungColumn;
     @FXML
     private TableColumn aktionColumn;
     @FXML
@@ -111,7 +108,7 @@ public class ZeiterfassungController implements ControllerInterface {
 
     private void monatWechseln() {
         aktuellerTag = 1;
-        aktuellesDatum.setText(Integer.toString(aktuellerTag) + ". " + MonatEnum.getFromId(aktuellerMonat) + " " + Integer.toString(aktuellesJahr));
+        aktuellesDatum.setText(aktuellerTag + ". " + MonatEnum.getFromId(aktuellerMonat) + " " + aktuellesJahr);
 
         setZeitField();
         setBuchungsTable();
@@ -131,7 +128,7 @@ public class ZeiterfassungController implements ControllerInterface {
                 aktuellerTag = Integer.parseInt(button.getText());
                 setBuchungsTable();
                 setZeitField();
-                aktuellesDatum.setText(Integer.toString(aktuellerTag) + ". " + MonatEnum.getFromId(aktuellerMonat) + " " + Integer.toString(aktuellesJahr));
+                aktuellesDatum.setText(aktuellerTag + ". " + MonatEnum.getFromId(aktuellerMonat) + " " + aktuellesJahr);
             });
 			hBox.getChildren().addAll(button);
 		}
@@ -140,14 +137,14 @@ public class ZeiterfassungController implements ControllerInterface {
 		toggleButton.setSelected(true);
         setZeitField();
 
-        aktuellesDatum.setText(Integer.toString(aktuellerTag) + ". " + MonatEnum.getFromId(aktuellerMonat) + " " + Integer.toString(aktuellesJahr));
+        aktuellesDatum.setText(aktuellerTag + ". " + MonatEnum.getFromId(aktuellerMonat) + " " + aktuellesJahr);
 	}
 
     private void updateZeit() {
         GregorianCalendar calendar = new GregorianCalendar(aktuellesJahr,aktuellerMonat,aktuellerTag);
         Date date = calendar.getTime();
 
-        ZeiterfassungDAO.updateZeiterfassung(date, LoginApp.getUser(), Double.parseDouble(zeiterfassungField.getText()), buchung.getValue().getId());
+        ZeiterfassungDAO.updateZeiterfassung(date, LoginApp.getUser(), Double.parseDouble(zeiterfassungField.getText()), buchung.getValue().getId(), beschreibung.getText());
     }
 
     private void setZeitField() {
@@ -179,7 +176,7 @@ public class ZeiterfassungController implements ControllerInterface {
 
         zeitColumn.setCellValueFactory(cellData -> cellData.getValue().getZeit().asObject());
         buchungColumn.setCellValueFactory(cellData -> cellData.getValue().getBuchung().getBuchungName());
-        beschreibungColumn.setCellValueFactory(cellData -> cellData.getValue().getDatum().asObject()); //TODO Beschreibung
+        beschreibungColumn.setCellValueFactory(cellData -> cellData.getValue().getBeschreibung()); //TODO Beschreibung
 
         //Dem Button die Logik für das Löschen hinzufügen
         aktionColumn.setCellFactory(ActionButtonTableCell.<Zeiterfassung>forTableColumn("Löschen", (Zeiterfassung zeiterfassung) -> {
@@ -193,13 +190,4 @@ public class ZeiterfassungController implements ControllerInterface {
         erfassungTable.getSortOrder().add(buchungColumn);
     }
 
-    //TODO Login mit user übergeben
-    //TODO Beschreibung -> nicht wichtig
-    //TODO "Heute" -> nicht wichtig
-    //TODO On action im fxml definieren nicht wichtig
-    //TODO Sortierung Buchung -> Nicht wichtig
-    //TODO Pause -> Nicht wichtig
-    //TODO Kalender zum funktionieren bringen - > Nicht wichtig
-    //TODO Farben wenn erfasst oder nicht -> Nicht wichtig
-    //TODO Maven
 }

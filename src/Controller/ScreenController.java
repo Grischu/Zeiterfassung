@@ -20,10 +20,6 @@ public class ScreenController {
          screenMap.put(name, pane);
     }
 
-    public void removeScreen(String name){
-        screenMap.remove(name);
-    }
-
     public void activate(String name){
         main.setRoot( screenMap.get(name) );
     }
@@ -39,15 +35,4 @@ public class ScreenController {
 		screenController.activate("Zeiterfassung");
 	}
 
-	public void startseiteOeffnen() {
-		ScreenController screenController = Main.getScreenController();
-		try {
-			screenController.addScreen("Startfenster", FXMLLoader.load(getClass().getResource("Startfenster.fxml")));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		screenController.activate("Startfenster");		
-	}
 }

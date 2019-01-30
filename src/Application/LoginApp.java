@@ -1,11 +1,7 @@
 package Application;
 
 public class LoginApp {
-
-
     static int user;
-
-
 
     public static int getUser() {
         return user;
@@ -14,7 +10,4 @@ public class LoginApp {
     public static void setUser(int user) {
         LoginApp.user = user;
     }
-
-
-
 }

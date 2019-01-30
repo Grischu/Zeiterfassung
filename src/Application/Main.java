@@ -35,9 +35,6 @@ public class Main extends Application {
         return screenController;
     }
 
-    public static void setScreenController(ScreenController screenController) {
-        Main.screenController = screenController;
-    }
 
     public static void main(String[] args) {
         launch(args);

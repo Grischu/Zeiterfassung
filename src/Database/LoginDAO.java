@@ -5,7 +5,6 @@ import java.sql.ResultSet;
 
 public class LoginDAO {
 
-
     public static int login(String userName, String userPassword) {
 
         ResultSet r;

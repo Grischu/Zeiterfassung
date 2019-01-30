@@ -1,27 +1,20 @@
 package Model;
 
-import Application.Main;
-import Controller.ZeiterfassungController;
-import Database.ZeiterfassungDAO;
 import javafx.beans.property.*;
-import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.scene.control.Button;
-
-import java.util.Date;
 
 public class Zeiterfassung {
 
     private IntegerProperty id;
     private Buchung buchung;
     private DoubleProperty zeit;
-    private IntegerProperty datum;
+    private LongProperty datum;
+    private StringProperty beschreibung;
 
     public Zeiterfassung() {
         this.id = new SimpleIntegerProperty();
         this.zeit = new SimpleDoubleProperty();
-        this.datum = new SimpleIntegerProperty();
+        this.datum = new SimpleLongProperty();
+        this.beschreibung = new SimpleStringProperty();
     }
 
     public IntegerProperty getId() {
@@ -40,12 +33,16 @@ public class Zeiterfassung {
         this.zeit.set(zeit);
     }
 
-    public IntegerProperty getDatum() {
-        return datum;
+    public void setDatum(long datum) {
+        this.datum.set(datum);
     }
 
-    public void setDatum(int datum) {
-        this.datum.set(datum);
+    public StringProperty getBeschreibung() {
+        return beschreibung;
+    }
+
+    public void setBeschreibung(String beschreibung) {
+        this.beschreibung.set(beschreibung);
     }
 
     public Buchung getBuchung() {

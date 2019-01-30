@@ -30,16 +30,8 @@ public class Buchung {
         return buchungName;
     }
 
-    public StringProperty buchungNameProperty() {
-        return buchungName;
-    }
-
     public void setBuchungName(String buchungName) {
         this.buchungName.set(buchungName);
-    }
-
-    public void setBuchungName(SimpleStringProperty buchungName) {
-        this.buchungName = buchungName;
     }
 
 }
