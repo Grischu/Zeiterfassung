@@ -1,5 +1,8 @@
 package Application;
 
+/**
+ * Klasse für das handling des Users welcher eingeloggt ist.
+ */
 public class LoginApp {
     static int user;
 

@@ -8,6 +8,9 @@ import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Klasse um auf die SQLite DB zugreiffen zu können.
+ */
 public class Datenbank {
 
 	private static String conString = "jdbc:sqlite:datenbank.db";

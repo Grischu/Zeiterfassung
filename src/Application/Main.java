@@ -8,7 +8,9 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.application.Application;
 
-
+/**
+ * Main-Klasse um die Applikation zu starten.
+ */
 public class Main extends Application {
 
     private static ScreenController screenController;

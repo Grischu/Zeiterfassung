@@ -3,8 +3,17 @@ package Database;
 
 import java.sql.ResultSet;
 
+/**
+ * Data Access Object fürs Login
+ */
 public class LoginDAO {
 
+    /**
+     * Logindaten mit der DB abgleichen und den User zurückgeben.
+     * @param userName username
+     * @param userPassword passwort
+     * @return userId
+     */
     public static int login(String userName, String userPassword) {
 
         ResultSet r;

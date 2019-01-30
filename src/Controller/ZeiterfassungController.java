@@ -19,7 +19,12 @@ import java.time.YearMonth;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+/**
+ * Controller für das Zeiterfassungsfenster.
+ */
 public class ZeiterfassungController implements ControllerInterface {
+
+    //FXML Variablen
 	@FXML
 	private HBox hBox;
 	@FXML
@@ -49,6 +54,7 @@ public class ZeiterfassungController implements ControllerInterface {
     @FXML
     private Label zeitField;
 
+    //Hilfsvariablen
 	private int aktuellerTag;
     private int aktuellerMonat;
 	private int aktuellesJahr;
@@ -62,6 +68,9 @@ public class ZeiterfassungController implements ControllerInterface {
         setErfassenButton();
     }
 
+    /**
+     * Beim ersten öffnen das aktuelle Datum setzen.
+     */
     private void aktuellesDatumInitialisieren() {
         YearMonth yearMonthObject = YearMonth.now();
         int daysInMonth = yearMonthObject.lengthOfMonth();
@@ -73,6 +82,9 @@ public class ZeiterfassungController implements ControllerInterface {
         setToggleButtons(daysInMonth);
     }
 
+    /**
+     * Den Erfassen-Button inizialisieren
+     */
     private void setErfassenButton() {
         erfassenButton.setOnAction(event -> {
             updateZeit();
@@ -81,6 +93,9 @@ public class ZeiterfassungController implements ControllerInterface {
         });
     }
 
+    /**
+     * Die Logik für die Buttons 'nächster monat' und 'vorheriger monat' setzen.
+     */
     private void setMonateHandler() {
         letzterMonat.setOnAction(event -> {
             if(aktuellerMonat == 1) {
@@ -106,6 +121,10 @@ public class ZeiterfassungController implements ControllerInterface {
 
     }
 
+    /**
+     * Wird beim Monatswechsel aufgerufen und setzt den aktuellen Tag auf 1 und aktualisiert
+     * das angezeigte Datum.
+     */
     private void monatWechseln() {
         aktuellerTag = 1;
         aktuellesDatum.setText(aktuellerTag + ". " + MonatEnum.getFromId(aktuellerMonat) + " " + aktuellesJahr);
@@ -116,15 +135,19 @@ public class ZeiterfassungController implements ControllerInterface {
         setToggleButtons(yearMonthObject.lengthOfMonth());
     }
 
+    /**
+     * Logik für die Tage-Buttons und das hinzufügen in die hBox welche angezeigt wird.
+     * @param daysInMonth Tage im Monat
+     */
     private void setToggleButtons(int daysInMonth) {
 	    hBox.getChildren().clear();
 		ToggleGroup toggleGroup = new ToggleGroup();
-
+        //Für jeden Tag im Monat einen neuen Button erstellen und der hBox hinzufügen
 		for(int i = 1; i<=daysInMonth;i++) {
 		    ToggleButton button = new ToggleButton(Integer.toString(i));
 		    button.setToggleGroup(toggleGroup);
+		    //Action, dass beim Tageswechsel der Text aktualisiert wird
             button.setOnAction(event -> {
-                //button.setStyle("-fx-base: red;");
                 aktuellerTag = Integer.parseInt(button.getText());
                 setBuchungsTable();
                 setZeitField();
@@ -140,6 +163,9 @@ public class ZeiterfassungController implements ControllerInterface {
         aktuellesDatum.setText(aktuellerTag + ". " + MonatEnum.getFromId(aktuellerMonat) + " " + aktuellesJahr);
 	}
 
+    /**
+     * Die erfasste Zeit auf der Datenbank aktualisieren
+     */
     private void updateZeit() {
         GregorianCalendar calendar = new GregorianCalendar(aktuellesJahr,aktuellerMonat,aktuellerTag);
         Date date = calendar.getTime();
@@ -147,12 +173,18 @@ public class ZeiterfassungController implements ControllerInterface {
         ZeiterfassungDAO.updateZeiterfassung(date, LoginApp.getUser(), Double.parseDouble(zeiterfassungField.getText()), buchung.getValue().getId(), beschreibung.getText());
     }
 
+    /**
+     * Den 'Zeit gearbeitet heute' Text aktualisieren
+     */
     private void setZeitField() {
         GregorianCalendar calendar = new GregorianCalendar(aktuellesJahr,aktuellerMonat,aktuellerTag);
         Date date = calendar.getTime();
         zeitField.setText(Double.toString(ZeiterfassungDAO.getZeiterfassung(date, LoginApp.getUser())));
     }
 
+    /**
+     * Die Choicebox mit den Buchungstypen aus der DB abfüllen und die logik der Darstellung setzen
+     */
     private void setBuchung() {
 	    buchung.setItems(ZeiterfassungDAO.getBuchungen());
         buchung.setConverter(new StringConverter<Buchung>() {
@@ -170,13 +202,16 @@ public class ZeiterfassungController implements ControllerInterface {
         buchung.getSelectionModel().selectFirst();
     }
 
+    /**
+     * Die logik der Buchungstabelle setzen und aus der DB Daten für die Anzeige holen.
+     */
     private void setBuchungsTable() {
         GregorianCalendar calendar = new GregorianCalendar(aktuellesJahr,aktuellerMonat,aktuellerTag);
         Date date = calendar.getTime();
 
         zeitColumn.setCellValueFactory(cellData -> cellData.getValue().getZeit().asObject());
         buchungColumn.setCellValueFactory(cellData -> cellData.getValue().getBuchung().getBuchungName());
-        beschreibungColumn.setCellValueFactory(cellData -> cellData.getValue().getBeschreibung()); //TODO Beschreibung
+        beschreibungColumn.setCellValueFactory(cellData -> cellData.getValue().getBeschreibung());
 
         //Dem Button die Logik für das Löschen hinzufügen
         aktionColumn.setCellFactory(ActionButtonTableCell.<Zeiterfassung>forTableColumn("Loeschen", (Zeiterfassung zeiterfassung) -> {

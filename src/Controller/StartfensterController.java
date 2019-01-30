@@ -9,6 +9,9 @@ import com.jfoenix.controls.JFXTextField;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 
+/**
+ * Controller für das Startfenster / Loginfenster
+ */
 public class StartfensterController implements ControllerInterface {
 
 	@FXML
@@ -25,6 +28,9 @@ public class StartfensterController implements ControllerInterface {
         setLoginButton();
     }
 
+    /**
+     * Login-Button inizialisieren.
+     */
     private void setLoginButton() {
         loginButton.setOnAction(event -> {
             int user = LoginDAO.login(benutzerName.getText(), passwort.getText());

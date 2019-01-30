@@ -5,6 +5,9 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
+/**
+ * Buchungs-Model
+ */
 public class Buchung {
     private IntegerProperty id;
     private StringProperty buchungName;
@@ -16,10 +19,6 @@ public class Buchung {
 
     public int getId() {
         return id.get();
-    }
-
-    public IntegerProperty idProperty() {
-        return id;
     }
 
     public void setId(int id) {

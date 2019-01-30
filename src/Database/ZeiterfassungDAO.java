@@ -11,8 +11,19 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 
+/**
+ * Data Access Object für die Zeiterfassung
+ */
 public class ZeiterfassungDAO {
 
+    /**
+     * Zeiterfassung auf der Datenbank updaten
+     * @param date datum
+     * @param user user
+     * @param zeit erfasste zeit
+     * @param buchungId buchungstyp
+     * @param beschreibung beschreibung der erfassung
+     */
     public static void updateZeiterfassung(Date date, int user, double zeit, int buchungId, String beschreibung) {
         String sql = "INSERT INTO Zeiterfassung (persid,zeit,datum,buchungId,beschreibung) values(" +
                 user + "," + zeit + "," + date.getTime() + "," + buchungId  + "," + "'" + beschreibung + "'" +");";
@@ -25,6 +36,12 @@ public class ZeiterfassungDAO {
         }
     }
 
+    /**
+     * Zeiterfassung von einem User zu einem Tag holen
+     * @param date datum
+     * @param user user
+     * @return zeiterfassung
+     */
     public static double getZeiterfassung(Date date, int user) {
         ResultSet rs = null;
         double result = 0;
@@ -49,6 +66,10 @@ public class ZeiterfassungDAO {
         return result;
     }
 
+    /**
+     * Die Buchungstypen aus der DB holen.
+     * @return Liste aus buchungen
+     */
     public static ObservableList<Buchung> getBuchungen() {
         ObservableList<Buchung> result = FXCollections.observableArrayList();
         ResultSet rs = null;
@@ -66,6 +87,12 @@ public class ZeiterfassungDAO {
         return result;
     }
 
+    /**
+     * Alle Informationen zu einer Zeiterfassung zu einem bestimmten Datum und User holen (für Tabelle).
+     * @param date datum
+     * @param user user
+     * @return liste aus Zeiterfassungen
+     */
     public static ObservableList<Zeiterfassung> getErfassungen(Date date, int user) {
         ResultSet r = null;
         ObservableList<Zeiterfassung> result = FXCollections.observableArrayList();
@@ -98,6 +125,11 @@ public class ZeiterfassungDAO {
         return result;
     }
 
+    /**
+     * Buchungstyp von der Id des buchungstyp aus der db holen.
+     * @param buchungId buchungsId
+     * @return Buchungsname
+     */
     private static String getBuchungNameFromId(int buchungId) {
         ResultSet r;
         String result = null;
@@ -117,12 +149,21 @@ public class ZeiterfassungDAO {
         return result;
     }
 
+    /**
+     * Umwandlung von java.util.Date zu java.sql.Date für erfassungen auf der DB.
+     * @param uDate date
+     * @return sql date
+     */
     private static java.sql.Date convertUtilToSql(java.util.Date uDate) {
         java.sql.Date sDate = new java.sql.Date(uDate.getTime());
         return sDate;
 
     }
 
+    /**
+     * Eine Zeiterfassung auf der DB löschen
+     * @param id zeiterfassungId
+     */
     public static void zeiterfassungLoeschen(int id) {
 
         String sql = "DELETE FROM zeiterfassung WHERE id= " + id + "; ";

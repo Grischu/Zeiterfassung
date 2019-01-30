@@ -2,6 +2,9 @@ package Model;
 
 import javafx.beans.property.*;
 
+/**
+ * Zeiterfassungs-Model
+ */
 public class Zeiterfassung {
 
     private IntegerProperty id;

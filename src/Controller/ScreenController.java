@@ -8,6 +8,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 
+/**
+ * Handler für das switchen der Fenster.
+ */
 public class ScreenController {
     private HashMap<String, Pane> screenMap = new HashMap<>();
     private Scene main;
