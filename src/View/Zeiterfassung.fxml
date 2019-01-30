@@ -23,8 +23,8 @@
          </font>
       </Label>
       <HBox fx:id="hBox" layoutX="27.0" layoutY="268.0" prefHeight="32.0" prefWidth="1136.0" />
-      <Button fx:id="letzterMonat" layoutX="889.0" layoutY="149.0" mnemonicParsing="false" text="&lt;-" />
-      <Button fx:id="naechsterMonat" layoutX="1013.0" layoutY="149.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="30.0" text="-&gt;" />
+      <Button fx:id="letzterMonat" layoutX="868.0" layoutY="149.0" mnemonicParsing="false" text="&lt;-" />
+      <Button fx:id="naechsterMonat" layoutX="1034.0" layoutY="149.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="30.0" text="-&gt;" />
       <Label layoutX="378.0" layoutY="496.0" text="Zeiterfassung:" />
       <TextField fx:id="zeiterfassungField" layoutX="481.0" layoutY="491.0" prefHeight="31.0" prefWidth="71.0" />
       <Button fx:id="erfassenButton" layoutX="937.0" layoutY="494.0" mnemonicParsing="false" text="Erfassen" />

@@ -179,7 +179,7 @@ public class ZeiterfassungController implements ControllerInterface {
         beschreibungColumn.setCellValueFactory(cellData -> cellData.getValue().getBeschreibung()); //TODO Beschreibung
 
         //Dem Button die Logik für das Löschen hinzufügen
-        aktionColumn.setCellFactory(ActionButtonTableCell.<Zeiterfassung>forTableColumn("Löschen", (Zeiterfassung zeiterfassung) -> {
+        aktionColumn.setCellFactory(ActionButtonTableCell.<Zeiterfassung>forTableColumn("Loeschen", (Zeiterfassung zeiterfassung) -> {
             erfassungTable.getItems().remove(zeiterfassung);
             ZeiterfassungDAO.zeiterfassungLoeschen(zeiterfassung.getId().get());
             setZeitField();
