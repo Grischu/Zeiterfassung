@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<eclipse-userlibraries>
+  <library name="jfoenix-8.0.81">
+    <archive path="C:/Users/Nico Christener/IdeaProjects/Zeiterfassung/jfoenix-8.0.8.jar" />
+  </library>
+  <library name="sqlite-jdbc-3.23.1">
+    <archive path="C:/Users/Nico Christener/IdeaProjects/Zeiterfassung/sqlite-jdbc-3.23.1.jar" />
+  </library>
+</eclipse-userlibraries>
+
