@@ -1,4 +1,4 @@
-package Model;
+package Enum;
 
 import com.sun.istack.internal.Nullable;
 
